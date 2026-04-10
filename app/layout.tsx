@@ -4,11 +4,11 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   title: {
-    default: "Stonebay — Nigeria's #1 Marketplace",
-    template: "%s | Stonebay",
+    default: "Eldorado — Find Your Perfect Property",
+    template: "%s | Eldorado",
   },
   description:
-    "Shop from thousands of verified sellers across fashion, electronics, home goods, beauty, and more.",
+    "Discover and explore premium properties for sale and rent. Eldorado connects you with trusted agents, modern homes, and the best real estate deals.",
 };
 
 export default function RootLayout({

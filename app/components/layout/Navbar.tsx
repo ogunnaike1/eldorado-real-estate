@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "About", href: "#about" },
+  { label: "About", href: "/about" },
   { label: "Projects", href: "#projects" },
   { label: "Blog", href: "#blog" },
   { label: "Careers", href: "#careers" },
@@ -42,7 +42,7 @@ export default function Navbar() {
       >
         <div className="flex items-center justify-between px-5 sm:px-8 md:px-12 lg:px-20">
           {/* Logo */}
-          <Link href="/" className="relative z-10 shrink-0">
+          <Link href="/" className="relative z-10 flex-shrink-0">
             <Image
               src={scrolled || isOpen ? "/images/logo-white.png" : "/images/logo-white.png"}
               alt="Eldorado Real Estate"

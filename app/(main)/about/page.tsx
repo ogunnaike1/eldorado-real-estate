@@ -1,10 +1,10 @@
-import AboutHero from "../components/about/AboutHero";
-import StorySection from "../components/about/StorySection";
+import AboutHero from "../../components/about/AboutHero";
+import StorySection from "../../components/about/StorySection";
 
-import ValuesSection from "../components/about/ValuesSection";
-import CEOProfile from "../components/about/CEOprofile";
-import MilestonesTimeline from "../components/about/MilestonesTimeline";
-import AboutCTA from "../components/about/AboutCTA";
+import ValuesSection from "../../components/about/ValuesSection";
+import CEOProfile from "../../components/about/CEOprofile";
+import MilestonesTimeline from "../../components/about/MilestonesTimeline";
+import AboutCTA from "../../components/about/AboutCTA";
 
 export const metadata = {
   title: "About Us | Eldorado Real Estate",

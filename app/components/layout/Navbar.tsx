@@ -5,19 +5,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import AppointmentModal from "../shared/AppointmentModal";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Blog", href: "#blog" },
-  { label: "Careers", href: "#careers" },
-  { label: "CSR", href: "#csr" },
+  { label: "Projects", href: "/projects" },
+  { label: "Blog", href: "/blog" },
+  { label: "Careers", href: "/careers" },
+  { label: "CSR", href: "/csr" },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -25,11 +27,15 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
+    document.body.style.overflow = isOpen || showModal ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [isOpen]);
+  }, [isOpen, showModal]);
+
+  const openAppointment = () => {
+    setIsOpen(false);
+    setShowModal(true);
+  };
 
   return (
     <>
@@ -44,7 +50,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="relative z-10 flex-shrink-0">
             <Image
-              src={scrolled || isOpen ? "/images/logo-white.png" : "/images/logo-white.png"}
+              src="/images/logo-white.png"
               alt="Eldorado Real Estate"
               width={160}
               height={26}
@@ -73,9 +79,9 @@ export default function Navbar() {
 
           {/* CTA + Hamburger */}
           <div className="flex items-center gap-3 sm:gap-4">
-            <Link
-              href="#contact"
-              className={`hidden md:inline-flex items-center gap-2 px-5 lg:px-6 py-2.5 font-body text-[10px] lg:text-[11px] font-semibold tracking-ultrawide uppercase transition-all duration-500 ${
+            <button
+              onClick={openAppointment}
+              className={`hidden md:inline-flex items-center gap-2 px-5 lg:px-6 py-2.5 font-body text-[10px] lg:text-[11px] font-semibold tracking-ultrawide uppercase transition-all duration-500 cursor-pointer ${
                 scrolled
                   ? "bg-white text-brand-slate hover:bg-brand-ice"
                   : "bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20"
@@ -83,7 +89,7 @@ export default function Navbar() {
             >
               Schedule Appointment
               <ChevronRight size={14} />
-            </Link>
+            </button>
 
             {/* Mobile Toggle */}
             <button
@@ -132,14 +138,13 @@ export default function Navbar() {
               transition={{ delay: 0.6 }}
               className="mt-10"
             >
-              <Link
-                href="#contact"
-                onClick={() => setIsOpen(false)}
+              <button
+                onClick={openAppointment}
                 className="btn-white"
               >
                 Schedule Appointment
                 <ChevronRight size={14} className="ml-2" />
-              </Link>
+              </button>
             </motion.div>
 
             <motion.p
@@ -153,6 +158,9 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Appointment Modal */}
+      <AppointmentModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </>
   );
 }

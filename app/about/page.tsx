@@ -2,7 +2,7 @@ import AboutHero from "../components/about/AboutHero";
 import StorySection from "../components/about/StorySection";
 
 import ValuesSection from "../components/about/ValuesSection";
-import TeamCarousel from "../components/about/TeamCarousel";
+import CEOProfile from "../components/about/CEOprofile";
 import MilestonesTimeline from "../components/about/MilestonesTimeline";
 import AboutCTA from "../components/about/AboutCTA";
 
@@ -18,7 +18,7 @@ export default function AboutPage() {
       <AboutHero />
       <StorySection />
       <ValuesSection />
-      <TeamCarousel />
+      <CEOProfile />
       <MilestonesTimeline />
       <AboutCTA />
     </>

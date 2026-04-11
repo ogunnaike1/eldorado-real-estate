@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, CheckCircle, Calendar } from "lucide-react";
+import { X, Send, CheckCircle, Calendar, Loader2, AlertCircle } from "lucide-react";
 
 const projectOptions = [
   "The Meridian Tower — Banana Island",
@@ -22,7 +22,8 @@ interface AppointmentModalProps {
 }
 
 export default function AppointmentModal({ isOpen, onClose }: AppointmentModalProps) {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -34,32 +35,57 @@ export default function AppointmentModal({ isOpen, onClose }: AppointmentModalPr
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate submission
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setForm({ fullName: "", email: "", phone: "", project: "" });
+    setStatus("loading");
+    setErrorMsg("");
+
+    try {
+      const res = await fetch("/api/appointment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Something went wrong");
+      }
+
+      setStatus("success");
+      setTimeout(() => {
+        setStatus("idle");
+        setForm({ fullName: "", email: "", phone: "", project: "" });
+        onClose();
+      }, 3000);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to submit. Please try again.";
+      setErrorMsg(message);
+      setStatus("error");
+    }
+  };
+
+  const handleClose = () => {
+    if (status !== "loading") {
+      setStatus("idle");
+      setErrorMsg("");
       onClose();
-    }, 2500);
+    }
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            onClick={onClose}
+            onClick={handleClose}
             className="fixed inset-0 z-[150] bg-brand-dark/70 backdrop-blur-sm"
           />
 
-          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -68,23 +94,19 @@ export default function AppointmentModal({ isOpen, onClose }: AppointmentModalPr
             className="fixed inset-0 z-[160] flex items-center justify-center p-4 sm:p-6 pointer-events-none"
           >
             <div className="bg-white w-full max-w-[480px] shadow-2xl shadow-black/20 pointer-events-auto relative overflow-hidden">
-              {/* Decorative top accent */}
               <div className="h-1 w-full bg-brand-slate" />
 
-              {/* Close Button */}
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center text-brand-silver hover:text-brand-slate hover:bg-brand-ice transition-all duration-300 z-10"
                 aria-label="Close modal"
               >
                 <X size={18} />
               </button>
 
-              {/* Content */}
               <div className="p-6 sm:p-8">
                 <AnimatePresence mode="wait">
-                  {submitted ? (
-                    /* Success State */
+                  {status === "success" ? (
                     <motion.div
                       key="success"
                       initial={{ opacity: 0, y: 20 }}
@@ -104,128 +126,87 @@ export default function AppointmentModal({ isOpen, onClose }: AppointmentModalPr
                         Appointment Requested
                       </h3>
                       <p className="font-body text-sm text-brand-silver leading-relaxed">
-                        Thank you, {form.fullName.split(" ")[0]}! Our team will reach out
-                        within 24 hours to confirm your appointment.
+                        Thank you, {form.fullName.split(" ")[0]}! Our team will
+                        reach out within 24 hours to confirm your appointment.
                       </p>
                     </motion.div>
                   ) : (
-                    /* Form State */
                     <motion.div
                       key="form"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                     >
-                      {/* Header */}
                       <div className="flex items-center gap-3 mb-1">
                         <div className="w-10 h-10 flex items-center justify-center bg-brand-ice flex-shrink-0">
                           <Calendar size={18} className="text-brand-slate" />
                         </div>
-                        <div>
-                          <h3 className="font-display text-xl sm:text-2xl text-brand-slate">
-                            Schedule Appointment
-                          </h3>
-                        </div>
+                        <h3 className="font-display text-xl sm:text-2xl text-brand-slate">
+                          Schedule Appointment
+                        </h3>
                       </div>
                       <p className="font-body text-sm text-brand-silver mb-7">
                         Fill in your details and we&apos;ll arrange a private consultation.
                       </p>
 
-                      {/* Form */}
+                      {status === "error" && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-4 py-3 mb-5 font-body text-xs"
+                        >
+                          <AlertCircle size={15} className="flex-shrink-0" />
+                          {errorMsg}
+                        </motion.div>
+                      )}
+
                       <form onSubmit={handleSubmit} className="space-y-5">
-                        {/* Full Name */}
                         <div>
-                          <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-brand-silver mb-2">
-                            Full Name
-                          </label>
-                          <input
-                            type="text"
-                            name="fullName"
-                            value={form.fullName}
-                            onChange={handleChange}
-                            required
-                            placeholder="e.g. Adewale Ogundimu"
-                            className="w-full bg-brand-ice border border-transparent focus:border-brand-slate/20 px-4 py-3 font-body text-sm text-brand-slate placeholder:text-brand-silver/50 outline-none transition-colors duration-300"
-                          />
+                          <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-brand-silver mb-2">Full Name</label>
+                          <input type="text" name="fullName" value={form.fullName} onChange={handleChange} required disabled={status === "loading"} placeholder="e.g. Adewale Ogundimu"
+                            className="w-full bg-brand-ice border border-transparent focus:border-brand-slate/20 px-4 py-3 font-body text-sm text-brand-slate placeholder:text-brand-silver/50 outline-none transition-colors duration-300 disabled:opacity-50" />
                         </div>
 
-                        {/* Email */}
                         <div>
-                          <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-brand-silver mb-2">
-                            Email Address
-                          </label>
-                          <input
-                            type="email"
-                            name="email"
-                            value={form.email}
-                            onChange={handleChange}
-                            required
-                            placeholder="you@example.com"
-                            className="w-full bg-brand-ice border border-transparent focus:border-brand-slate/20 px-4 py-3 font-body text-sm text-brand-slate placeholder:text-brand-silver/50 outline-none transition-colors duration-300"
-                          />
+                          <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-brand-silver mb-2">Email Address</label>
+                          <input type="email" name="email" value={form.email} onChange={handleChange} required disabled={status === "loading"} placeholder="you@example.com"
+                            className="w-full bg-brand-ice border border-transparent focus:border-brand-slate/20 px-4 py-3 font-body text-sm text-brand-slate placeholder:text-brand-silver/50 outline-none transition-colors duration-300 disabled:opacity-50" />
                         </div>
 
-                        {/* Phone */}
                         <div>
-                          <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-brand-silver mb-2">
-                            Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            name="phone"
-                            value={form.phone}
-                            onChange={handleChange}
-                            required
-                            placeholder="+234 800 000 0000"
-                            className="w-full bg-brand-ice border border-transparent focus:border-brand-slate/20 px-4 py-3 font-body text-sm text-brand-slate placeholder:text-brand-silver/50 outline-none transition-colors duration-300"
-                          />
+                          <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-brand-silver mb-2">Phone Number</label>
+                          <input type="tel" name="phone" value={form.phone} onChange={handleChange} required disabled={status === "loading"} placeholder="+234 800 000 0000"
+                            className="w-full bg-brand-ice border border-transparent focus:border-brand-slate/20 px-4 py-3 font-body text-sm text-brand-slate placeholder:text-brand-silver/50 outline-none transition-colors duration-300 disabled:opacity-50" />
                         </div>
 
-                        {/* Project Interest */}
                         <div>
-                          <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-brand-silver mb-2">
-                            Project of Interest
-                          </label>
+                          <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-brand-silver mb-2">Project of Interest</label>
                           <div className="relative">
-                            <select
-                              name="project"
-                              value={form.project}
-                              onChange={handleChange}
-                              required
-                              className="w-full bg-brand-ice border border-transparent focus:border-brand-slate/20 px-4 py-3 font-body text-sm text-brand-slate outline-none transition-colors duration-300 appearance-none cursor-pointer"
-                            >
-                              <option value="" disabled>
-                                Select a project
-                              </option>
+                            <select name="project" value={form.project} onChange={handleChange} required disabled={status === "loading"}
+                              className="w-full bg-brand-ice border border-transparent focus:border-brand-slate/20 px-4 py-3 font-body text-sm text-brand-slate outline-none transition-colors duration-300 appearance-none cursor-pointer disabled:opacity-50">
+                              <option value="" disabled>Select a project</option>
                               {projectOptions.map((opt) => (
-                                <option key={opt} value={opt}>
-                                  {opt}
-                                </option>
+                                <option key={opt} value={opt}>{opt}</option>
                               ))}
                             </select>
-                            {/* Custom dropdown arrow */}
                             <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-brand-silver">
-                                <path d="m6 9 6 6 6-6" />
-                              </svg>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-brand-silver"><path d="m6 9 6 6 6-6" /></svg>
                             </div>
                           </div>
                         </div>
 
-                        {/* Submit */}
-                        <button
-                          type="submit"
-                          className="w-full bg-brand-slate text-white py-3.5 font-body text-xs sm:text-sm font-semibold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-brand-dark transition-colors duration-500 active:scale-[0.98] mt-2"
-                        >
-                          Request Appointment
-                          <Send size={14} />
+                        <button type="submit" disabled={status === "loading"}
+                          className="w-full bg-brand-slate text-white py-3.5 font-body text-xs sm:text-sm font-semibold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-brand-dark transition-colors duration-500 active:scale-[0.98] mt-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                          {status === "loading" ? (
+                            <><Loader2 size={15} className="animate-spin" />Sending...</>
+                          ) : (
+                            <>Request Appointment<Send size={14} /></>
+                          )}
                         </button>
                       </form>
 
-                      {/* Privacy note */}
                       <p className="font-body text-[10px] text-brand-silver/60 text-center mt-4 leading-relaxed">
-                        Your information is secure and will only be used to arrange
-                        your consultation. We never share your data with third parties.
+                        Your information is secure and will only be used to arrange your consultation.
                       </p>
                     </motion.div>
                   )}

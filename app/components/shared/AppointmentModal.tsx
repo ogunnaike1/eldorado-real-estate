@@ -163,7 +163,7 @@ export default function AppointmentModal({ isOpen, onClose }: AppointmentModalPr
                       <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
                           <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-brand-silver mb-2">Full Name</label>
-                          <input type="text" name="fullName" value={form.fullName} onChange={handleChange} required disabled={status === "loading"} placeholder="e.g. Adewale Ogundimu"
+                          <input type="text" name="fullName" value={form.fullName} onChange={handleChange} required disabled={status === "loading"} placeholder="e.g. Oluwasomidotun Olajide"
                             className="w-full bg-brand-ice border border-transparent focus:border-brand-slate/20 px-4 py-3 font-body text-sm text-brand-slate placeholder:text-brand-silver/50 outline-none transition-colors duration-300 disabled:opacity-50" />
                         </div>
 
@@ -175,7 +175,7 @@ export default function AppointmentModal({ isOpen, onClose }: AppointmentModalPr
 
                         <div>
                           <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-brand-silver mb-2">Phone Number</label>
-                          <input type="tel" name="phone" value={form.phone} onChange={handleChange} required disabled={status === "loading"} placeholder="+234 800 000 0000"
+                          <input type="tel" name="phone" value={form.phone} onChange={handleChange} required disabled={status === "loading"} placeholder="+234 706 261 4165"
                             className="w-full bg-brand-ice border border-transparent focus:border-brand-slate/20 px-4 py-3 font-body text-sm text-brand-slate placeholder:text-brand-silver/50 outline-none transition-colors duration-300 disabled:opacity-50" />
                         </div>
 

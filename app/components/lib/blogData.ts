@@ -19,7 +19,7 @@ export const blogPosts: BlogPost[] = [
     date: "March 15, 2026",
     readTime: "8 min",
     image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
-    author: { name: "Adewale Ogundimu", role: "CEO, Eldorado Real Estate", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" },
+    author: { name: "Oluwasomidotun Olajide", role: "CEO, Eldorado Real Estate", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" },
     content: `The Nigerian luxury real estate market is undergoing a fundamental shift. Where once the conversation centered on whether Lagos could support premium property, the question has evolved to how high the ceiling can go.
 
 ## A Market Coming of Age

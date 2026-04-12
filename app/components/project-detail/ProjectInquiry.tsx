@@ -63,7 +63,7 @@ export default function ProjectInquiry({ project }: { project: Project }) {
                 </div>
                 <div>
                   <label className="block font-body text-[10px] font-semibold tracking-ultrawide uppercase text-white/30 mb-2">Phone Number</label>
-                  <input type="tel" name="phone" value={form.phone} onChange={handleChange} required disabled={status === "loading"} placeholder="+234 800 000 0000"
+                  <input type="tel" name="phone" value={form.phone} onChange={handleChange} required disabled={status === "loading"} placeholder="+234 706 261 4165"
                     className="w-full bg-white/[0.06] border border-white/10 focus:border-white/25 px-4 py-3.5 font-body text-sm text-white placeholder:text-white/25 outline-none transition-colors disabled:opacity-50" />
                 </div>
               </div>

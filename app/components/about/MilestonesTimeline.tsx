@@ -6,40 +6,27 @@ import { fadeUp, staggerContainer } from "../lib/animations";
 
 const milestones = [
   {
-    year: "2014",
+    year: "2025",
     title: "Eldorado Founded",
     desc: "Established with a vision to transform the luxury real estate landscape in Nigeria. First office opened in Victoria Island, Lagos.",
   },
   {
-    year: "2016",
+    year: "2025",
     title: "First Project Delivered",
     desc: "Completed the Emerald Residences — 12 luxury apartments in Ikoyi that sold out before completion, setting the tone for our brand.",
   },
+
   {
-    year: "2018",
-    title: "African Property Award",
-    desc: "Won Best Residential Real Estate Developer at the International African Property Awards, gaining continental recognition.",
-  },
-  {
-    year: "2020",
-    title: "Expansion to Abuja",
+    year: "2025",
+    title: "Expansion to ibadan",
     desc: "Launched the Pinnacle One commercial complex in Maitama, marking our first project outside Lagos and entering a new market.",
   },
   {
-    year: "2022",
+    year: "2025",
     title: "Banana Island Landmark",
     desc: "Broke ground on the Meridian Tower — a 32-storey high-rise set to become the tallest residential building on Banana Island.",
   },
-  {
-    year: "2024",
-    title: "₦85B Portfolio Milestone",
-    desc: "Portfolio surpassed ₦85 billion in total value across 15+ active projects spanning residential, commercial, and hospitality.",
-  },
-  {
-    year: "2025",
-    title: "International Expansion",
-    desc: "Entered the Dubai and Johannesburg markets with two landmark mixed-use developments, bringing the Eldorado standard to a global audience.",
-  },
+
 ];
 
 export default function MilestonesTimeline() {

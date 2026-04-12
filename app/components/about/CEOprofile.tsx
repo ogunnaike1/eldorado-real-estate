@@ -24,7 +24,8 @@ export default function CEOProfile() {
             <div className="relative aspect-[4/5] overflow-hidden group">
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
-                style={{ backgroundImage: `url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80')` }}
+                // UPDATED IMAGE PATH BELOW
+                style={{ backgroundImage: `url('/images/eldorado-ceo.jpeg')` }}
               />
               {/* Decorative Frame */}
               <div className="absolute inset-0 border-[12px] border-white/10 m-4" />
@@ -56,7 +57,7 @@ export default function CEOProfile() {
             </motion.p>
             
             <motion.h2 variants={fadeUp} className="section-title mb-6">
-              Adewale <span className="font-heading italic text-brand-silver">Ogundimu</span>
+              Oluwasomidotun <span className="font-heading italic text-brand-silver">Olajide</span>
             </motion.h2>
             
             <motion.p variants={fadeUp} className="font-body text-brand-silver tracking-widest uppercase text-xs mb-8">
@@ -65,15 +66,15 @@ export default function CEOProfile() {
 
             <motion.div variants={fadeUp} className="space-y-6 text-brand-slate/80 font-body leading-relaxed text-lg">
               <p>
-                A visionary leader with over 15 years in luxury construction and real estate, 
-                Adewale Ogundimu has redefined the skyline of sub-Saharan Africa. His journey 
+                A visionary leader with over 10 years in luxury construction and real estate, 
+                Oluwasomidotun Olajide has redefined the skyline of sub-Saharan Africa. His journey 
                 began with a simple premise: that African luxury should be synonymous with 
                 uncompromising global standards.
               </p>
               <p>
                 Under his stewardship, Eldorado has evolved from a boutique developer into a 
                 titan of the industry, known for architectural audacity and meticulous 
-                engineering. Adewale’s foresight and resilience have driven the brand’s 
+                engineering. Oluwasomidotun’s foresight and resilience have driven the brand’s 
                 meteoric rise, securing its position as the preferred partner for 
                 high-net-worth investors across the continent.
               </p>

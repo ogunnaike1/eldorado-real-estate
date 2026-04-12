@@ -5,7 +5,7 @@ import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
 const contacts = [
   { icon: MapPin, label: "Visit Us", value: "Plot 12, Victoria Island, Lagos", sub: "By appointment only" },
-  { icon: Phone, label: "Call Us", value: "+234 800 000 0000", sub: "Mon – Sat, 9AM – 6PM", href: "tel:+2348000000000" },
+  { icon: Phone, label: "Call Us", value: "+234 706 261 4165", sub: "Mon – Sat, 9AM – 6PM", href: "tel:+2348000000000" },
   { icon: Mail, label: "Email Us", value: "info@eldoradorealestate.com", sub: "We respond within 24 hours", href: "mailto:info@eldoradorealestate.com" },
   { icon: Clock, label: "Office Hours", value: "Monday – Saturday", sub: "9:00 AM – 6:00 PM WAT" },
 ];

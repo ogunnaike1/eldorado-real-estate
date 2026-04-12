@@ -8,24 +8,16 @@ import { MapPin, Phone, Mail, ArrowRight, Loader2, CheckCircle } from "lucide-re
 const footerLinks = {
   company: [
     { label: "About Us", href: "/about" },
-    { label: "Our Team", href: "/about" },
-    { label: "Careers", href: "/careers" },
-    { label: "Press", href: "/blog" },
+    { label: "Projects", href: "/projects" },
     { label: "CSR", href: "/csr" },
-  ],
-  properties: [
-    { label: "Residential", href: "/projects" },
-    { label: "Commercial", href: "/projects" },
-    { label: "Hospitality", href: "/projects" },
-    { label: "New Developments", href: "/projects" },
-    { label: "Investment", href: "/projects" },
-  ],
-  resources: [
-    { label: "Blog", href: "/blog" },
-    { label: "Market Reports", href: "/blog" },
-    { label: "Buyer's Guide", href: "/blog" },
-    { label: "FAQs", href: "/contact" },
+    { label: "Careers", href: "/careers" },
     { label: "Contact", href: "/contact" },
+  ],
+  quickLinks: [
+    { label: "Blog", href: "/blog" },
+    { label: "Schedule Appointment", href: "/contact" },
+    { label: "Privacy Policy", href: "#" },
+    { label: "Terms of Service", href: "#" },
   ],
 };
 
@@ -62,7 +54,7 @@ export default function Footer() {
     <footer className="bg-brand-dark">
       <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-      {/* Newsletter Bar */}
+      {/* Newsletter */}
       <div className="px-5 sm:px-8 md:px-12 lg:px-20 xl:px-28 py-10 md:py-14 border-b border-white/[0.06]">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6">
           <div>
@@ -91,7 +83,8 @@ export default function Footer() {
       <div className="px-5 sm:px-8 md:px-12 lg:px-20 xl:px-28 py-14 md:py-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
-            <div className="lg:col-span-4">
+            {/* Brand */}
+            <div className="lg:col-span-5">
               <Link href="/" className="inline-block mb-5">
                 <Image src="/images/logo-white.png" alt="Eldorado Real Estate" width={160} height={26} className="h-6 sm:h-7 w-auto opacity-80" />
               </Link>
@@ -105,16 +98,25 @@ export default function Footer() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone size={15} className="text-white/25 flex-shrink-0" />
-                  <a href="tel:+2348000000000" className="font-body text-sm text-white/40 hover:text-white/60 transition-colors">+234 800 000 0000</a>
+                  <a href="tel:+2348000000000" className="font-body text-sm text-white/40 hover:text-white/60 transition-colors">+234 706 261 4165</a>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail size={15} className="text-white/25 flex-shrink-0" />
                   <a href="mailto:info@eldoradorealestate.com" className="font-body text-sm text-white/40 hover:text-white/60 transition-colors">info@eldoradorealestate.com</a>
                 </div>
               </div>
+              <div className="flex items-center gap-3 mt-6">
+                {socials.map((s) => (
+                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
+                    className="w-8 h-8 flex items-center justify-center border border-white/[0.08] text-white/25 hover:text-white/60 hover:border-white/20 transition-all duration-400">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d={s.svg} /></svg>
+                  </a>
+                ))}
+              </div>
             </div>
 
-            <div className="lg:col-span-2 lg:col-start-6">
+            {/* Company */}
+            <div className="lg:col-span-3 lg:col-start-7">
               <h4 className="font-body text-[10px] sm:text-[11px] font-semibold tracking-ultrawide uppercase text-white/25 mb-5">Company</h4>
               <ul className="space-y-2.5">
                 {footerLinks.company.map((link) => (
@@ -123,19 +125,11 @@ export default function Footer() {
               </ul>
             </div>
 
+            {/* Quick Links */}
             <div className="lg:col-span-2">
-              <h4 className="font-body text-[10px] sm:text-[11px] font-semibold tracking-ultrawide uppercase text-white/25 mb-5">Properties</h4>
+              <h4 className="font-body text-[10px] sm:text-[11px] font-semibold tracking-ultrawide uppercase text-white/25 mb-5">Quick Links</h4>
               <ul className="space-y-2.5">
-                {footerLinks.properties.map((link) => (
-                  <li key={link.label}><Link href={link.href} className="font-body text-sm text-white/40 hover:text-white/70 transition-colors duration-300">{link.label}</Link></li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="lg:col-span-2">
-              <h4 className="font-body text-[10px] sm:text-[11px] font-semibold tracking-ultrawide uppercase text-white/25 mb-5">Resources</h4>
-              <ul className="space-y-2.5">
-                {footerLinks.resources.map((link) => (
+                {footerLinks.quickLinks.map((link) => (
                   <li key={link.label}><Link href={link.href} className="font-body text-sm text-white/40 hover:text-white/70 transition-colors duration-300">{link.label}</Link></li>
                 ))}
               </ul>
@@ -146,24 +140,10 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/[0.06] px-5 sm:px-8 md:px-12 lg:px-20 py-6">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4">
           <p className="font-body text-xs text-white/20 tracking-wider">
             &copy; {new Date().getFullYear()} Eldorado Real Estate. All rights reserved.
           </p>
-
-          <div className="flex items-center gap-3">
-            {socials.map((s) => (
-              <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
-                className="w-8 h-8 flex items-center justify-center border border-white/[0.06] text-white/20 hover:text-white/50 hover:border-white/15 transition-all duration-400">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d={s.svg} /></svg>
-              </a>
-            ))}
-          </div>
-
-          <div className="flex gap-5">
-            <a href="#" className="font-body text-xs text-white/20 hover:text-white/40 tracking-wider transition-colors">Privacy Policy</a>
-            <a href="#" className="font-body text-xs text-white/20 hover:text-white/40 tracking-wider transition-colors">Terms</a>
-          </div>
         </div>
       </div>
     </footer>

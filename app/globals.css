@@ -1,7 +1,6 @@
-
-@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Libre+Caslon+Display&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap");
 @import "tailwindcss";
-/* ─── Theme Configuration (replaces tailwind.config.ts in v4) ─── */
+
+/* ─── Theme Configuration ─── */
 @theme {
   --color-brand-white: #ffffff;
   --color-brand-ice: #f5f7fa;
@@ -90,7 +89,6 @@ body {
 
 /* ─── Component Classes ─── */
 
-/* Glassmorphism Card */
 .glass-card {
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(24px);
@@ -107,7 +105,6 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-/* Section Padding */
 @utility section-pad {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
@@ -135,7 +132,6 @@ body {
   }
 }
 
-/* Section Label */
 @utility section-label {
   font-family: var(--font-body);
   font-size: 11px;
@@ -148,7 +144,6 @@ body {
   }
 }
 
-/* Section Title */
 @utility section-title {
   font-family: var(--font-display);
   font-size: 1.875rem;
@@ -165,7 +160,6 @@ body {
   }
 }
 
-/* CTA Buttons */
 @utility btn-primary {
   position: relative;
   display: inline-flex;
@@ -249,14 +243,12 @@ body {
   }
 }
 
-/* Divider */
 @utility divider {
   height: 1px;
   width: 100%;
   background: linear-gradient(to right, transparent, rgba(160, 174, 192, 0.3), transparent);
 }
 
-/* Animation Delays */
 @utility animate-delay-100 { animation-delay: 100ms; }
 @utility animate-delay-200 { animation-delay: 200ms; }
 @utility animate-delay-300 { animation-delay: 300ms; }

@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
-import "./globals.css"
+import "./globals.css";
 
 
 export const metadata: Metadata = {
-  title: {
-    default: "Eldorado — Find Your Perfect Property",
-    template: "%s | Eldorado",
-  },
+  title: "Eldorado Real Estate | Premium Properties",
   description:
-    "Discover and explore premium properties for sale and rent. Eldorado connects you with trusted agents, modern homes, and the best real estate deals.",
+    "Eldorado Real Estate — Premium luxury developments crafted for those who demand excellence. Discover signature residences in the most sought-after locations.",
 };
 
 export default function RootLayout({
@@ -18,8 +15,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Libre+Caslon+Display&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>
-          {children}
+  
+        <main>{children}</main>
+
       </body>
     </html>
   );

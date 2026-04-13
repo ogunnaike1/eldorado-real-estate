@@ -1,5 +1,24 @@
 import { client } from "./client";
 
+export interface SanityAuthor {
+  name?: string;
+  role?: string;
+  avatar?: string;
+}
+
+export interface SanityBlogPost {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content?: string;
+  tag?: string;
+  date: string;
+  readTime?: string;
+  image?: string;
+  author?: SanityAuthor;
+}
+
 // ─── PROJECTS ───
 export async function getProjects() {
   return client.fetch(`
@@ -55,8 +74,8 @@ export async function getProjectBySlug(slug: string) {
 
 // ─── BLOG ───
 export async function getBlogPosts() {
-  return client.fetch(`
-    *[_type == "blogPost"] | order(publishedAt desc) {
+  return client.fetch<SanityBlogPost[]>(`
+    *[_type == "blogPost" && defined(slug.current) && publishedAt <= now()] | order(publishedAt desc) {
       _id,
       title,
       "slug": slug.current,
@@ -75,9 +94,9 @@ export async function getBlogPosts() {
 }
 
 export async function getBlogPostBySlug(slug: string) {
-  return client.fetch(
+  return client.fetch<SanityBlogPost | null>(
     `
-    *[_type == "blogPost" && slug.current == $slug][0] {
+    *[_type == "blogPost" && slug.current == $slug && publishedAt <= now()][0] {
       _id,
       title,
       "slug": slug.current,

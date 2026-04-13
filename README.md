@@ -34,3 +34,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Sanity Instant Blog Revalidation
+
+To make blog posts appear immediately after publishing in Sanity, configure a webhook:
+
+1. Add env var:
+
+```bash
+SANITY_REVALIDATE_SECRET=your-long-random-secret
+```
+
+2. In Sanity project settings, create webhook:
+- **URL:** `https://your-domain.com/api/revalidate?secret=your-long-random-secret`
+- **Trigger on:** create, update, delete, publish, unpublish
+- **Filter:** `_type == "blogPost"`
+- **Projection:** `{"_type": _type, "slug": slug.current}`
+
+This endpoint revalidates `/blog` and `/blog/[slug]` instantly.

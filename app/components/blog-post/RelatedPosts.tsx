@@ -5,9 +5,17 @@ import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { Clock, ArrowUpRight } from "lucide-react";
 import { fadeUp, staggerContainer } from "../lib/animations";
-import { BlogPost } from "../lib/blogData";
+import type { SanityBlogPost } from "../../sanity/lib/queries";
 
-export default function RelatedPosts({ posts }: { posts: BlogPost[] }) {
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+export default function RelatedPosts({ posts }: { posts: SanityBlogPost[] }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
 
@@ -33,8 +41,8 @@ export default function RelatedPosts({ posts }: { posts: BlogPost[] }) {
                 </div>
                 <div className="p-4 sm:p-5">
                   <div className="flex items-center gap-3 text-brand-silver font-body text-[10px] tracking-wider mb-3">
-                    <span>{p.date}</span>
-                    <span className="flex items-center gap-1"><Clock size={10} />{p.readTime}</span>
+                    <span>{formatDate(p.date)}</span>
+                    <span className="flex items-center gap-1"><Clock size={10} />{p.readTime || "5 min"}</span>
                   </div>
                   <h3 className="font-display text-lg text-brand-slate group-hover:text-brand-dark transition-colors leading-snug">{p.title}</h3>
                 </div>

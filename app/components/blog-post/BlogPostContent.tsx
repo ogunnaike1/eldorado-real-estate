@@ -1,12 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Clock, ArrowLeft, Share2, Copy, Check } from "lucide-react";
+import { Clock, ArrowLeft, Copy, Check } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import  type  { BlogPost } from "../lib/blogData";
+import type { SanityBlogPost } from "../../sanity/lib/queries";
 
-export default function BlogPostContent({ post }: { post: BlogPost }) {
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+export default function BlogPostContent({ post }: { post: SanityBlogPost }) {
   const [copied, setCopied] = useState(false);
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
@@ -47,23 +55,23 @@ export default function BlogPostContent({ post }: { post: BlogPost }) {
 
             {/* Meta */}
             <div className="flex flex-wrap items-center gap-4 text-brand-silver font-body text-xs tracking-wider mb-8 pb-8 border-b border-brand-ice">
-              <span>{post.date}</span>
-              <span className="flex items-center gap-1"><Clock size={11} />{post.readTime} read</span>
+              <span>{formatDate(post.date)}</span>
+              <span className="flex items-center gap-1"><Clock size={11} />{post.readTime || "5 min"} read</span>
             </div>
 
             {/* Author Card */}
             <div className="flex items-center gap-4 mb-8">
               <div className="w-12 h-12 rounded-full bg-cover bg-center border-2 border-brand-ice flex-shrink-0"
-                style={{ backgroundImage: `url('${post.author.avatar}')` }} />
+                style={{ backgroundImage: `url('${post.author?.avatar || ""}')` }} />
               <div>
-                <p className="font-display text-base text-brand-slate">{post.author.name}</p>
-                <p className="font-body text-xs text-brand-silver">{post.author.role}</p>
+                <p className="font-display text-base text-brand-slate">{post.author?.name || "Eldorado Team"}</p>
+                <p className="font-body text-xs text-brand-silver">{post.author?.role || "Author"}</p>
               </div>
             </div>
 
             {/* Content */}
             <div className="prose-eldorado">
-              {post.content.split("\n\n").map((block, i) => {
+              {(post.content || "").split("\n\n").map((block, i) => {
                 if (block.startsWith("## ")) {
                   return (
                     <h2 key={i} className="font-display text-xl sm:text-2xl text-brand-slate mt-10 mb-4">

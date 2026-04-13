@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 
-const WHATSAPP_NUMBER = "2348131561562";
+const WHATSAPP_NUMBER = "2347062614165";
 const DEFAULT_MESSAGE = "Hi! I'd like to know more about your available properties.";
 
 export default function WhatsAppButton() {

@@ -4,27 +4,36 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import AdminSidebar from "../components/admin/AdminSidebar";
 
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [authorized, setAuthorized] = useState(false);
+  const isLoginPage = pathname === "/admin/login";
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("admin_token");
-    if (!token && pathname !== "/admin/login") {
-      router.push("/admin/login");
-    } else {
-      setAuthorized(true);
-    }
-  }, [pathname, router]);
+    setMounted(true);
 
-  // Login page gets no sidebar
-  if (pathname === "/admin/login") {
+    if (isLoginPage) return;
+
+    const token = localStorage.getItem("admin_token");
+    if (!token) {
+      router.push("/admin/login");
+    }
+  }, [isLoginPage, router]);
+
+  if (isLoginPage) {
     return <>{children}</>;
   }
 
-  if (!authorized) return null;
+  if (!mounted) {
+    return null;
+  }
+
+  const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+
+  if (!token) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-[#f8f9fb]">

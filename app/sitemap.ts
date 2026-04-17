@@ -3,7 +3,7 @@ import { MetadataRoute } from "next";
 import { getAllSlugs } from "./components/lib/projectData";
 import { getAllBlogSlugs } from "./components/lib/blogData";
 
-const BASE_URL = "https://eldoradorealestate.com";
+const BASE_URL = "https://eldoradolmtd.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Static pages

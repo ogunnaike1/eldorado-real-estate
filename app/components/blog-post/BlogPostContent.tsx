@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Clock, ArrowLeft, Copy, Check } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import type { SanityBlogPost } from "../../sanity/lib/queries";
+import type { BlogPost } from "../lib/blogData";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("en-US", {
@@ -14,7 +14,7 @@ function formatDate(value: string) {
   });
 }
 
-export default function BlogPostContent({ post }: { post: SanityBlogPost }) {
+export default function BlogPostContent({ post }: { post: BlogPost }) {
   const [copied, setCopied] = useState(false);
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";

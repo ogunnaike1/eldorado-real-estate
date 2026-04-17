@@ -5,7 +5,7 @@ import { motion, useInView } from "framer-motion";
 import { Clock, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { fadeUp, staggerContainer } from "../lib/animations";
-import type { SanityBlogPost } from "../../sanity/lib/queries";
+import type { BlogPost } from "../lib/blogData";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("en-US", {
@@ -15,7 +15,7 @@ function formatDate(value: string) {
   });
 }
 
-export default function BlogGrid({ posts }: { posts: SanityBlogPost[] }) {
+export default function BlogGrid({ posts }: { posts: BlogPost[] }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.05 });
 
@@ -30,7 +30,7 @@ export default function BlogGrid({ posts }: { posts: SanityBlogPost[] }) {
         <motion.div initial="hidden" animate={isInView ? "visible" : "hidden"} variants={staggerContainer}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {posts.map((p, i) => (
-            <motion.article key={p._id} variants={fadeUp} custom={i}
+            <motion.article key={p.slug} variants={fadeUp} custom={i}
               className="bg-white group hover:shadow-lg hover:shadow-brand-slate/[0.04] transition-all duration-500 border border-transparent hover:border-brand-silver/15">
               <Link href={`/blog/${p.slug}`}>
               <div className="relative overflow-hidden aspect-[16/10]">

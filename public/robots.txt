@@ -3,4 +3,4 @@ Allow: /
 Disallow: /studio/
 Disallow: /api/
 
-Sitemap: https://eldorado-real-estate.vercel.app/sitemap.xml
+Sitemap: https://eldoradolmtd.com/sitemap.xml

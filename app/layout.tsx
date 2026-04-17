@@ -3,7 +3,7 @@ import "./globals.css";
 import GoogleAnalytics from "./components/shared/GoogleAnalytics";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://eldoradorealestate.com"),
+  metadataBase: new URL("https://eldoradolmtd.com"),
   title: {
     default: "Eldorado Real Estate | Premium Luxury Properties in Nigeria",
     template: "%s | Eldorado Real Estate",

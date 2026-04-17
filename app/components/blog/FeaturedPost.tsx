@@ -5,7 +5,7 @@ import { motion, useInView } from "framer-motion";
 import { ArrowRight, Clock } from "lucide-react";
 import Link from "next/link";
 import { fadeUp, staggerContainer } from "../lib/animations";
-import type { SanityBlogPost } from "../../sanity/lib/queries";
+import type { BlogPost } from "../lib/blogData";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("en-US", {
@@ -15,7 +15,7 @@ function formatDate(value: string) {
   });
 }
 
-export default function FeaturedPost({ post }: { post?: SanityBlogPost }) {
+export default function FeaturedPost({ post }: { post?: BlogPost }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.15 });
 

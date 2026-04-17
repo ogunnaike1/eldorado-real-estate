@@ -5,7 +5,7 @@ import { getAllBlogSlugs } from "./components/lib/blogData";
 
 const BASE_URL = "https://eldoradolmtd.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
   const staticPages = [
     "",
@@ -23,7 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Dynamic project pages
-  const projectPages = getAllSlugs().map((slug) => ({
+  const projectSlugs = await getAllSlugs();
+  const projectPages = projectSlugs.map((slug) => ({
     url: `${BASE_URL}/projects/${slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
@@ -31,7 +32,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Dynamic blog pages
-  const blogPages = getAllBlogSlugs().map((slug) => ({
+  const blogSlugs = await getAllBlogSlugs();
+  const blogPages = blogSlugs.map((slug) => ({
     url: `${BASE_URL}/blog/${slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,

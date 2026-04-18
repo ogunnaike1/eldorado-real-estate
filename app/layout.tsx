@@ -6,68 +6,43 @@ import GoogleAnalytics from "./components/shared/GoogleAnalytics";
 export const metadata: Metadata = {
   metadataBase: new URL("https://eldoradolmtd.com"),
   title: {
-    default: "Eldorado Real Estate | Premium Luxury Properties in Nigeria",
+    default: "Eldorado Real Estate | Premium Luxury Properties",
     template: "%s | Eldorado Real Estate",
   },
-  description:
-    "Eldorado Real Estate — Nigeria's premier luxury real estate developer. Discover bespoke residences, commercial spaces, and investment opportunities in Lagos, Abuja, and beyond.",
-  keywords: [
-    "luxury real estate Nigeria",
-    "premium properties Lagos",
-    "Banana Island apartments",
-    "Ikoyi real estate",
-    "luxury homes Lagos",
-    "Eldorado Real Estate",
-    "real estate investment Nigeria",
-    "commercial property Victoria Island",
-    "luxury development Abuja",
-  ],
-  authors: [{ name: "Eldorado Real Estate" }],
-  creator: "Eldorado Real Estate",
-  publisher: "Eldorado Real Estate",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
+  description: "Nigeria's premier luxury real estate developer...",
+  
+  // Favicon
+  icons: {
+    icon: "/favicon.ico.png",
+    apple: "/apple-touch-icon.png",
   },
+  
+  // Social sharing preview
   openGraph: {
     type: "website",
-    locale: "en_NG",
-    url: "https://eldoradorealestate.com",
+    url: "https://your-domain.com",
     siteName: "Eldorado Real Estate",
-    title: "Eldorado Real Estate | Premium Luxury Properties in Nigeria",
-    description:
-      "Nigeria's premier luxury real estate developer. Discover bespoke residences and investment opportunities in the most prestigious locations.",
+    title: "Eldorado Real Estate | Premium Luxury Properties",
+    description: "Nigeria's premier luxury real estate developer...",
     images: [
       {
         url: "/images/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Eldorado Real Estate — Premium Luxury Properties",
+        alt: "Eldorado Real Estate",
       },
     ],
   },
+  
   twitter: {
     card: "summary_large_image",
-    title: "Eldorado Real Estate | Premium Luxury Properties",
-    description:
-      "Nigeria's premier luxury real estate developer. Discover bespoke residences in Lagos, Abuja, and beyond.",
+    title: "Eldorado Real Estate",
+    description: "Nigeria's premier luxury real estate developer",
     images: ["/images/og-image.jpg"],
-    creator: "@eldoradorestate",
   },
-  icons: {
-    icon: "/file.svg",
-    shortcut: "/file.svg",
-    apple: "/file.svg",
-  },
-  manifest: "/site.webmanifest",
 };
+
+
 
 export default function RootLayout({
   children,

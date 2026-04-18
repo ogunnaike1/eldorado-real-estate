@@ -1,606 +1,104 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Save, ArrowLeft, Loader2, Upload, Link as LinkIcon, X } from "lucide-react";
-import { supabase } from "../../../components/lib/supabase";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Loader2, Eye, EyeOff } from "lucide-react";
+import Popup from "../../../components/shared/Popup";
 
-const tags = ["Market Insight", "Investment", "Architecture", "Sustainability", "Design", "Guide", "News"] as const;
-
-type BlogForm = {
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  tag: string;
-  image: string;
-  author_name: string;
-  author_role: string;
-  author_avatar: string;
-  read_time: string;
-  published: boolean;
-};
-
-type BlogPostRow = {
-  id: string;
-  title: string | null;
-  slug: string | null;
-  excerpt: string | null;
-  content: string | null;
-  tag: string | null;
-  image: string | null;
-  author_name: string | null;
-  author_role: string | null;
-  author_avatar: string | null;
-  read_time: string | null;
-  published: boolean | null;
-};
-
-function slugify(text: string) {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
-
-const initialForm: BlogForm = {
-  title: "",
-  slug: "",
-  excerpt: "",
-  content: "",
-  tag: "News",
-  image: "",
-  author_name: "",
-  author_role: "",
-  author_avatar: "",
-  read_time: "",
-  published: false,
-};
-
-export default function BlogFormPage() {
+export default function AdminLoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const editId = searchParams.get("id");
-  const isEdit = !!editId;
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [loading, setLoading] = useState(Boolean(editId));
-  const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [imageMode, setImageMode] = useState<"url" | "upload">("url");
-  const [avatarMode, setAvatarMode] = useState<"url" | "upload">("url");
-  const [form, setForm] = useState<BlogForm>(initialForm);
+  const [popup, setPopup] = useState<{
+    isOpen: boolean;
+    type: "success" | "error";
+    title: string;
+    message: string;
+  }>({ isOpen: false, type: "success", title: "", message: "" });
 
-  useEffect(() => {
-    if (!editId) return;
-
-    const loadPost = async () => {
-      try {
-        const { data } = await supabase
-          .from("blog_posts")
-          .select("*")
-          .eq("id", editId)
-          .single<BlogPostRow>();
-
-        if (data) {
-          setForm({
-            title: data.title || "",
-            slug: data.slug || "",
-            excerpt: data.excerpt || "",
-            content: data.content || "",
-            tag: data.tag || "News",
-            image: data.image || "",
-            author_name: data.author_name || "",
-            author_role: data.author_role || "",
-            author_avatar: data.author_avatar || "",
-            read_time: data.read_time || "",
-            published: data.published ?? false,
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void loadPost();
-  }, [editId]);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type } = e.target;
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-      ...(name === "title" && !isEdit ? { slug: slugify(value) } : {}),
-    }));
-  };
-
-  const uploadFile = async (file: File, bucket: string, field: "image" | "author_avatar") => {
-    setUploading(true);
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
     try {
-      const ext = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const path = `${bucket}/${fileName}`;
-
-      const { error } = await supabase.storage.from("uploads").upload(path, file, {
-        cacheControl: "3600",
-        upsert: false,
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (error) {
-        alert("Upload failed: " + error.message);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setPopup({ isOpen: true, type: "error", title: "Login Failed", message: data.error || "Invalid email or password. Please try again." });
+        setLoading(false);
         return;
       }
 
-      const { data: urlData } = supabase.storage.from("uploads").getPublicUrl(path);
-      setForm((prev) => ({ ...prev, [field]: urlData.publicUrl }));
-    } finally {
-      setUploading(false);
+      localStorage.setItem("admin_token", data.token);
+      setPopup({ isOpen: true, type: "success", title: "Welcome Back!", message: "Signing you in to the admin panel..." });
+      setTimeout(() => router.push("/admin/dashboard"), 1500);
+    } catch {
+      setPopup({ isOpen: true, type: "error", title: "Something Went Wrong", message: "Unable to connect. Please check your connection and try again." });
+      setLoading(false);
     }
   };
-
-  const handleFileSelect = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: "image" | "author_avatar"
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      alert("Please select an image file");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("File size must be under 5MB");
-      return;
-    }
-
-    void uploadFile(file, field === "image" ? "blog-covers" : "avatars", field);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-
-    try {
-      const payload = { ...form, published_at: new Date().toISOString() };
-
-      if (isEdit) {
-        await supabase.from("blog_posts").update(payload).eq("id", editId);
-      } else {
-        await supabase.from("blog_posts").insert(payload);
-      }
-
-      router.push("/admin/blog");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin w-8 h-8 border-2 border-[#2d3748] border-t-transparent rounded-full" />
-      </div>
-    );
-  }
-
-  const inputStyle = {
-    width: "100%",
-    backgroundColor: "#f5f7fa",
-    border: "1px solid #e2e8f0",
-    padding: "10px 14px",
-    fontFamily: '"DM Sans", sans-serif',
-    fontSize: "14px",
-    color: "#2d3748",
-    outline: "none",
-  } as const;
-
-  const labelStyle = {
-    display: "block",
-    fontFamily: '"DM Sans", sans-serif',
-    fontSize: "10px",
-    fontWeight: 600,
-    letterSpacing: "0.15em",
-    textTransform: "uppercase" as const,
-    color: "#a0aec0",
-    marginBottom: "6px",
-  };
-
-  const tabStyle = (active: boolean) =>
-    ({
-      padding: "6px 12px",
-      fontSize: "11px",
-      fontWeight: 600,
-      fontFamily: '"DM Sans", sans-serif',
-      backgroundColor: active ? "#2d3748" : "#f5f7fa",
-      color: active ? "#fff" : "#a0aec0",
-      border: "none",
-      cursor: "pointer",
-    }) as const;
 
   return (
-    <div>
-      <button
-        onClick={() => router.back()}
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "6px",
-          fontFamily: '"DM Sans", sans-serif',
-          fontSize: "12px",
-          color: "#a0aec0",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          marginBottom: "16px",
-        }}
-      >
-        <ArrowLeft size={14} /> Back to Blog
-      </button>
+    <>
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: "#1a202c" }}>
+        <div className="w-full max-w-[400px]">
+          <div className="text-center mb-8">
+            <Image src="/images/logo-white.png" alt="Eldorado" width={160} height={26} className="h-7 w-auto mx-auto mb-6 opacity-80" />
+            <h1 style={{ fontFamily: '"DM Serif Display", Georgia, serif', fontSize: "24px", color: "#ffffff", marginBottom: "4px" }}>Admin Panel</h1>
+            <p style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontSize: "13px", color: "rgba(255,255,255,0.35)" }}>Sign in to manage your website</p>
+          </div>
 
-      <h1
-        style={{
-          fontFamily: '"DM Serif Display", serif',
-          fontSize: "28px",
-          color: "#2d3748",
-          marginBottom: "24px",
-        }}
-      >
-        {isEdit ? "Edit Post" : "New Blog Post"}
-      </h1>
-
-      <form onSubmit={handleSubmit}>
-        <div style={{ backgroundColor: "#fff", border: "1px solid #f0f0f0", padding: "24px", marginBottom: "16px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-            <div style={{ gridColumn: "1 / -1" }}>
-              <label style={labelStyle}>Post Title</label>
-              <input
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                required
-                style={inputStyle}
-                placeholder="e.g. The Future of Luxury Real Estate"
-              />
-            </div>
-
-            <div>
-              <label style={labelStyle}>URL Slug</label>
-              <input name="slug" value={form.slug} onChange={handleChange} required style={inputStyle} />
-            </div>
-
-            <div>
-              <label style={labelStyle}>Category</label>
-              <select name="tag" value={form.tag} onChange={handleChange} style={inputStyle}>
-                {tags.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ gridColumn: "1 / -1" }}>
-              <label style={labelStyle}>Cover Image</label>
-
-              <div style={{ display: "flex", gap: "2px", marginBottom: "8px" }}>
-                <button type="button" onClick={() => setImageMode("url")} style={tabStyle(imageMode === "url")}>
-                  <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                    <LinkIcon size={12} /> URL
-                  </span>
-                </button>
-
-                <button type="button" onClick={() => setImageMode("upload")} style={tabStyle(imageMode === "upload")}>
-                  <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                    <Upload size={12} /> Upload
-                  </span>
-                </button>
+          <div style={{ backgroundColor: "#ffffff", padding: "32px" }}>
+            <form onSubmit={handleLogin}>
+              <div style={{ marginBottom: "18px" }}>
+                <label style={{ display: "block", fontFamily: '"DM Sans", sans-serif', fontSize: "10px", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "#a0aec0", marginBottom: "6px" }}>Email Address</label>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="admin@eldorado.com"
+                  style={{ width: "100%", backgroundColor: "#f5f7fa", border: "1px solid transparent", padding: "12px 14px", fontFamily: '"DM Sans", sans-serif', fontSize: "14px", color: "#2d3748", outline: "none" }} />
               </div>
 
-              {imageMode === "url" ? (
-                <input
-                  name="image"
-                  value={form.image}
-                  onChange={handleChange}
-                  style={inputStyle}
-                  placeholder="[example.com](https://example.com/image.jpg)"
-                />
-              ) : (
-                <div>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileSelect(e, "image")}
-                    style={{ display: "none" }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                    style={{
-                      ...inputStyle,
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "8px",
-                      color: "#a0aec0",
-                      backgroundColor: "#f5f7fa",
-                      border: "2px dashed #e2e8f0",
-                      padding: "20px",
-                    }}
-                  >
-                    {uploading ? (
-                      <>
-                        <Loader2 size={16} className="animate-spin" /> Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Upload size={16} /> Click to upload image (max 5MB)
-                      </>
-                    )}
+              <div style={{ marginBottom: "24px" }}>
+                <label style={{ display: "block", fontFamily: '"DM Sans", sans-serif', fontSize: "10px", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "#a0aec0", marginBottom: "6px" }}>Password</label>
+                <div style={{ position: "relative" }}>
+                  <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Enter your password"
+                    style={{ width: "100%", backgroundColor: "#f5f7fa", border: "1px solid transparent", padding: "12px 44px 12px 14px", fontFamily: '"DM Sans", sans-serif', fontSize: "14px", color: "#2d3748", outline: "none" }} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#a0aec0" }}>
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-              )}
-
-              {form.image && (
-                <div style={{ marginTop: "8px", position: "relative", display: "inline-block" }}>
-                  <img
-                    src={form.image}
-                    alt="Preview"
-                    style={{ height: "80px", objectFit: "cover", border: "1px solid #e2e8f0" }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setForm((p) => ({ ...p, image: "" }))}
-                    style={{
-                      position: "absolute",
-                      top: "-6px",
-                      right: "-6px",
-                      width: "20px",
-                      height: "20px",
-                      borderRadius: "50%",
-                      backgroundColor: "#e53e3e",
-                      color: "#fff",
-                      border: "none",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "10px",
-                    }}
-                  >
-                    <X size={12} />
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label style={labelStyle}>Read Time</label>
-              <input name="read_time" value={form.read_time} onChange={handleChange} style={inputStyle} placeholder="5 min" />
-            </div>
-          </div>
-
-          <div style={{ marginTop: "16px" }}>
-            <label style={labelStyle}>Excerpt (short summary)</label>
-            <textarea
-              name="excerpt"
-              value={form.excerpt}
-              onChange={handleChange}
-              rows={2}
-              style={{ ...inputStyle, resize: "vertical" }}
-              placeholder="A brief summary for the blog card..."
-            />
-          </div>
-
-          <div style={{ marginTop: "16px" }}>
-            <label style={labelStyle}>Full Content</label>
-            <p
-              style={{
-                fontFamily: '"DM Sans", sans-serif',
-                fontSize: "11px",
-                color: "#cbd5e0",
-                marginBottom: "6px",
-              }}
-            >
-              Use ## for headings. Separate paragraphs with blank lines.
-            </p>
-            <textarea
-              name="content"
-              value={form.content}
-              onChange={handleChange}
-              rows={16}
-              style={{ ...inputStyle, resize: "vertical", fontFamily: "monospace", fontSize: "13px", lineHeight: "1.7" }}
-              placeholder={"## Introduction\n\nWrite your article here...\n\n## Second Heading\n\nMore content..."}
-            />
-          </div>
-        </div>
-
-        <div style={{ backgroundColor: "#fff", border: "1px solid #f0f0f0", padding: "24px", marginBottom: "16px" }}>
-          <p style={{ ...labelStyle, marginBottom: "16px", fontSize: "12px" }}>Author Details</p>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-            <div>
-              <label style={labelStyle}>Author Name</label>
-              <input name="author_name" value={form.author_name} onChange={handleChange} style={inputStyle} placeholder="John Doe" />
-            </div>
-
-            <div>
-              <label style={labelStyle}>Author Role</label>
-              <input name="author_role" value={form.author_role} onChange={handleChange} style={inputStyle} placeholder="CEO, Eldorado" />
-            </div>
-
-            <div style={{ gridColumn: "1 / -1" }}>
-              <label style={labelStyle}>Author Avatar</label>
-
-              <div style={{ display: "flex", gap: "2px", marginBottom: "8px" }}>
-                <button type="button" onClick={() => setAvatarMode("url")} style={tabStyle(avatarMode === "url")}>
-                  <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                    <LinkIcon size={12} /> URL
-                  </span>
-                </button>
-
-                <button type="button" onClick={() => setAvatarMode("upload")} style={tabStyle(avatarMode === "upload")}>
-                  <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                    <Upload size={12} /> Upload
-                  </span>
-                </button>
               </div>
 
-              {avatarMode === "url" ? (
-                <input
-                  name="author_avatar"
-                  value={form.author_avatar}
-                  onChange={handleChange}
-                  style={inputStyle}
-                  placeholder="[example.com](https://example.com/avatar.jpg)"
-                />
-              ) : (
-                <div>
-                  <input
-                    ref={avatarInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileSelect(e, "author_avatar")}
-                    style={{ display: "none" }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => avatarInputRef.current?.click()}
-                    disabled={uploading}
-                    style={{
-                      ...inputStyle,
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "8px",
-                      color: "#a0aec0",
-                      border: "2px dashed #e2e8f0",
-                      padding: "16px",
-                    }}
-                  >
-                    {uploading ? (
-                      <>
-                        <Loader2 size={14} className="animate-spin" /> Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Upload size={14} /> Upload avatar
-                      </>
-                    )}
-                  </button>
-                </div>
-              )}
-
-              {form.author_avatar && (
-                <div style={{ marginTop: "8px", position: "relative", display: "inline-block" }}>
-                  <img
-                    src={form.author_avatar}
-                    alt="Avatar"
-                    style={{
-                      width: "48px",
-                      height: "48px",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                      border: "1px solid #e2e8f0",
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setForm((p) => ({ ...p, author_avatar: "" }))}
-                    style={{
-                      position: "absolute",
-                      top: "-4px",
-                      right: "-4px",
-                      width: "18px",
-                      height: "18px",
-                      borderRadius: "50%",
-                      backgroundColor: "#e53e3e",
-                      color: "#fff",
-                      border: "none",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <X size={10} />
-                  </button>
-                </div>
-              )}
-            </div>
+              <button type="submit" disabled={loading}
+                style={{ width: "100%", backgroundColor: "#2d3748", color: "#ffffff", padding: "13px", fontFamily: '"DM Sans", sans-serif', fontSize: "13px", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                {loading ? <><Loader2 size={15} className="animate-spin" /> Signing in...</> : "Sign In"}
+              </button>
+            </form>
           </div>
-        </div>
 
-        <div
-          style={{
-            backgroundColor: "#fff",
-            border: "1px solid #f0f0f0",
-            padding: "20px 24px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              fontFamily: '"DM Sans", sans-serif',
-              fontSize: "14px",
-              color: "#2d3748",
-              cursor: "pointer",
-            }}
-          >
-            <input
-              type="checkbox"
-              name="published"
-              checked={form.published}
-              onChange={handleChange}
-              style={{ width: "16px", height: "16px" }}
-            />
-            Publish immediately
-          </label>
-
-          <button
-            type="submit"
-            disabled={saving || uploading}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "10px 20px",
-              backgroundColor: "#2d3748",
-              color: "#fff",
-              fontSize: "12px",
-              fontWeight: 600,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              fontFamily: '"DM Sans", sans-serif',
-              border: "none",
-              cursor: saving ? "not-allowed" : "pointer",
-              opacity: saving ? 0.7 : 1,
-            }}
-          >
-            {saving ? (
-              <>
-                <Loader2 size={14} className="animate-spin" /> Saving...
-              </>
-            ) : (
-              <>
-                <Save size={14} /> {isEdit ? "Update Post" : "Publish Post"}
-              </>
-            )}
-          </button>
+          <p style={{ textAlign: "center", fontFamily: '"DM Sans", sans-serif', fontSize: "11px", color: "rgba(255,255,255,0.2)", marginTop: "24px" }}>
+            Eldorado Real Estate Admin Panel
+          </p>
         </div>
-      </form>
-    </div>
+      </div>
+
+      <Popup
+        type={popup.type}
+        title={popup.title}
+        message={popup.message}
+        isOpen={popup.isOpen}
+        onClose={() => setPopup((p) => ({ ...p, isOpen: false }))}
+        autoClose={popup.type === "success" ? 1500 : 0}
+      />
+    </>
   );
 }

@@ -12,7 +12,7 @@ export interface BlogPost {
   author: { name: string; role: string; avatar: string };
 }
 
-// Fetch all published blog posts
+// Fetch all published blog posts from Supabase
 export async function getBlogPosts(): Promise<BlogPost[]> {
   const { data, error } = await supabase
     .from("blog_posts")
@@ -20,21 +20,20 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     .eq("published", true)
     .order("published_at", { ascending: false });
 
-  if (error || !data) return [];
+  if (error) {
+    console.error("Error fetching blog posts:", error);
+    return [];
+  }
+
+  if (!data) return [];
 
   return data.map((p) => ({
     slug: p.slug,
     title: p.title,
     excerpt: p.excerpt || "",
     content: p.content || "",
-    tag: p.tag || "",
-    date: p.published_at
-      ? new Date(p.published_at).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      : "",
+    tag: p.tag || "News",
+    date: p.published_at || p.created_at,
     readTime: p.read_time || "5 min",
     image: p.image || "",
     author: {
@@ -61,14 +60,8 @@ export async function getBlogBySlug(slug: string): Promise<BlogPost | null> {
     title: data.title,
     excerpt: data.excerpt || "",
     content: data.content || "",
-    tag: data.tag || "",
-    date: data.published_at
-      ? new Date(data.published_at).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      : "",
+    tag: data.tag || "News",
+    date: data.published_at || data.created_at,
     readTime: data.read_time || "5 min",
     image: data.image || "",
     author: {
@@ -79,7 +72,7 @@ export async function getBlogBySlug(slug: string): Promise<BlogPost | null> {
   };
 }
 
-// Get all published slugs (for static generation)
+// Get all published slugs
 export async function getAllBlogSlugs(): Promise<string[]> {
   const { data } = await supabase
     .from("blog_posts")

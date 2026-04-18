@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ToastProvider  from "./components/shared/ToastProvider";
 import "./globals.css";
 import GoogleAnalytics from "./components/shared/GoogleAnalytics";
 
@@ -61,9 +62,9 @@ export const metadata: Metadata = {
     creator: "@eldoradorestate",
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/file.svg",
+    shortcut: "/file.svg",
+    apple: "/file.svg",
   },
   manifest: "/site.webmanifest",
 };
@@ -74,7 +75,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -84,6 +85,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <ToastProvider />
         <GoogleAnalytics />
         <main>{children}</main>
       </body>

@@ -1,0 +1,16 @@
+{
+  "name": "Eldorado Real Estate",
+  "short_name": "Eldorado",
+  "description": "Premium luxury real estate in Nigeria.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/file.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

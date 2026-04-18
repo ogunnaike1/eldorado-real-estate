@@ -16,6 +16,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   const post = await getBlogBySlug(slug);
   if (!post) notFound();
+  
 
   const allPosts = await getBlogPosts();
   const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3);
